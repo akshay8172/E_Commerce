@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Conversion</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .heading{
+            text-align: center;
+        }
+        .fromamount{
+            margin-left: 400px;
+        }
+        #fromamountinput{
+            margin-left: 410px;
+            height: 25px;
+        }
+        .toamount{
+            margin-left: 440px;
+        }
+        #toamountinput{
+            margin-left: 415px;
+            height: 25px;
+        }
+        #button{
+            margin-top: 80px;
+            margin-left: 250px;
+            width: 100px;
+            height: 40px;
+            background-color:aqua;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-left: 415px;
+        }
+        #output{
+            margin-top: 40px;
+            margin-left: 30px;
+            height: 30px;
+        }
+        #currency{
+            text-align: center;
+        }
+        #fromcurrency{
+            margin-left: 80px;
+        }
+        </style>
+
+
+</head>
+<body style="background-color: rgb(104, 71, 71);">
+
+    
+<h1 class="heading">Currency Conversion</h1>
+
+<form id="currency" action="">
+
+    <h3><label for="from_currency">FROM</label> <label class="fromamount" for="fromamount">AMOUNT</label></h3>
+    <select name="from_currency" id="fromcurrency" class="currency">
+    </select> 
+      <input type="number" id="fromamountinput" class="currency">
+
+
+      <h3 style="margin-top: 100px;"><label for="to_currency">TO</label> </h3>
+
+      <select name="to_currency" id="tocurrency" class="currency">
+
+      </select> 
+<br><br>
+    <h3 style="font-size: 30px;">Result</h3>
+    <span id="output"></span>
+</form>
+
+<script>
+
+    $(document).ready(function(){
+        var my_api = 'deb5cf29f43a2dd57f39194a'
+        var fromcurrencyselect = $("#fromcurrency")
+        var tocurrencyselect = $("#tocurrency")
+    
+    // Get request function to get the currencies
+    
+    function currencyoptions(){
+        $.get("https://v6.exchangerate-api.com/v6/"+ my_api +"/codes",function(currency_name){
+            var currency_list = currency_name.supported_codes
+            console.log(currency_list)
+    
+           var options = currency_list.map(currency=>'<option value ='+currency[0]+'>'+ currency + '</options>')
+           console.log(options)
+    
+            fromcurrencyselect.html(options)
+            tocurrencyselect.html(options)
+    })}
+    
+    
+    currencyoptions()
+    
+    // Sending the selected currencies, and fetching the corresponding values.
+    $(".currency").change(function(event){
+        event.preventDefault();
+        var fromcurrency = fromcurrencyselect.val()
+        var tocurrency = tocurrencyselect.val()
+        var amount = $("#fromamountinput").val()
+        console.log(amount)
+    
+        $.get("https://v6.exchangerate-api.com/v6/"+ my_api +"/pair/"+fromcurrency+"/"+tocurrency+"/"+amount,function(result){
+            var result = result.conversion_result
+            console.log(result)
+            if(amount == ""){
+                $("#output").html("Invalid").css("color","red")
+    
+            }else{
+            $("#output").html(amount +" "+ fromcurrency +" Equals to "+ result +" "+ tocurrency).css("color","white")}
+        })
+    })
+    })
+    
+</script>
+
+
+<script src="currency.js"></script>
+</body>
+</html>
